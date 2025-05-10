@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.env
+
+# Flask
+instance/
+.webassets-cache
+*.db
+
+# React
+node_modules/
+/frontend/findmypet-client/build/
+/frontend/findmypet-client/.env
+/frontend/findmypet-client/.env.local
+/frontend/findmypet-client/.env.development.local
+/frontend/findmypet-client/.env.test.local
+/frontend/findmypet-client/.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Uploaded files
+/backend/app/static/uploads/ 
