@@ -2,6 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPetById, deletePet } from '../../services/petService';
 import { useAuth } from '../../context/AuthContext';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix for default marker icons in Leaflet with React
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Custom icons for missing and found pets
+const missingIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+const foundIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 const PetDetail = () => {
   const { id } = useParams();
@@ -82,6 +112,14 @@ const PetDetail = () => {
         setMessageSent(false);
       }, 2000);
     }
+  };
+  
+  const hasValidCoordinates = (pet) => {
+    return pet && 
+           pet.latitude && 
+           pet.longitude && 
+           !isNaN(parseFloat(pet.latitude)) && 
+           !isNaN(parseFloat(pet.longitude));
   };
   
   if (loading) {
@@ -216,12 +254,33 @@ const PetDetail = () => {
             </div>
           </div>
           
-          {pet.latitude && pet.longitude && (
+          {hasValidCoordinates(pet) && (
             <div className="mt-4">
               <h4>Map</h4>
               <hr />
-              <div className="bg-light p-3 text-center">
-                <p className="text-muted mb-0">Map location will be displayed here</p>
+              <div style={{ height: '400px', width: '100%' }}>
+                <MapContainer 
+                  center={[parseFloat(pet.latitude), parseFloat(pet.longitude)]} 
+                  zoom={15} 
+                  style={{ height: '100%', width: '100%' }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker 
+                    position={[parseFloat(pet.latitude), parseFloat(pet.longitude)]}
+                    icon={pet.status === 'missing' ? missingIcon : foundIcon}
+                  >
+                    <Popup>
+                      <div>
+                        <h6>{pet.title}</h6>
+                        <p><strong>Last seen:</strong> {formatDate(pet.last_seen_date)}</p>
+                        <p><strong>Address:</strong> {pet.last_seen_address}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
               </div>
             </div>
           )}
