@@ -77,11 +77,17 @@ const AddPetPost = () => {
   
   // Handle location change from the map component
   const handleLocationChange = (location) => {
-    setFormData(prev => ({
-      ...prev,
-      latitude: location.latitude,
-      longitude: location.longitude
-    }));
+    console.log('Location updated:', location);
+    
+    // Only update if the values actually changed
+    if (formData.latitude !== location.latitude || 
+        formData.longitude !== location.longitude) {
+      setFormData(prev => ({
+        ...prev,
+        latitude: location.latitude,
+        longitude: location.longitude
+      }));
+    }
   };
   
   // Function to validate form data before submission

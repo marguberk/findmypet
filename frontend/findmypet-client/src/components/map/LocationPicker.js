@@ -31,36 +31,38 @@ const MarkerPosition = ({ position, setPosition }) => {
 const LocationPicker = ({ value, onChange }) => {
   // Default center for the map (can be configured based on user's location)
   const defaultCenter = [43.238949, 76.889709]; // Almaty, Kazakhstan
-  const [position, setPosition] = useState(
-    value && value.latitude && value.longitude 
-      ? [parseFloat(value.latitude), parseFloat(value.longitude)] 
-      : null
-  );
+  const [position, setPosition] = useState(null);
   const mapRef = useRef(null);
-
-  // When position changes, update the parent component
-  useEffect(() => {
-    if (position) {
-      onChange({
-        latitude: position[0],
-        longitude: position[1]
-      });
-    }
-  }, [position, onChange]);
-
-  // When value changes from parent, update the local position
+  
+  // Initialize position from props only once on mount or when value changes significantly
   useEffect(() => {
     if (value && value.latitude && value.longitude) {
-      const newPos = [parseFloat(value.latitude), parseFloat(value.longitude)];
+      const lat = parseFloat(value.latitude);
+      const lng = parseFloat(value.longitude);
       
-      // Only update if the position has actually changed
-      if (!position || 
-          position[0] !== newPos[0] || 
-          position[1] !== newPos[1]) {
-        setPosition(newPos);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setPosition([lat, lng]);
       }
     }
-  }, [value, position]);
+  }, [value.latitude, value.longitude]);
+
+  // When position changes locally (from map click), update the parent component
+  useEffect(() => {
+    if (position) {
+      // Only call onChange if the values are actually different
+      if (
+        !value.latitude || 
+        !value.longitude || 
+        Math.abs(parseFloat(value.latitude) - position[0]) > 0.000001 ||
+        Math.abs(parseFloat(value.longitude) - position[1]) > 0.000001
+      ) {
+        onChange({
+          latitude: position[0],
+          longitude: position[1]
+        });
+      }
+    }
+  }, [position]);
 
   const handleClearLocation = () => {
     setPosition(null);
