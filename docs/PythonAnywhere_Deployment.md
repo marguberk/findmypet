@@ -174,11 +174,19 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:////home/yourusername/findmypet/instance/pets.
 ### 2. MySQL (для продакшена)
 
 1. Создайте базу данных MySQL в разделе Databases на PythonAnywhere
-2. Обновите конфигурацию в файле `/home/yourusername/findmypet/repo/backend/config.py`:
+2. Установите необходимые пакеты для работы с MySQL:
+
+```bash
+pip install mysqlclient
+```
+
+3. Обновите конфигурацию в файле `/home/yourusername/findmypet/repo/backend/config.py`:
 
 ```python
 SQLALCHEMY_DATABASE_URI = 'mysql://yourusername:database_password@yourusername.mysql.pythonanywhere-services.com/yourusername$pets'
 ```
+
+> **Важно:** Замените `yourusername` на ваше имя пользователя в PythonAnywhere (например, kelistik), а `database_password` на пароль, который вы указали при создании базы данных.
 
 ### 3. Инициализация базы данных
 
@@ -226,6 +234,26 @@ tar xf node-v16.20.0-linux-x64.tar.xz
 echo 'export PATH=$HOME/node/node-v16.20.0-linux-x64/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+### Проблемы с базой данных MySQL
+
+При использовании MySQL могут возникнуть ошибки:
+
+1. **Ошибка "ModuleNotFoundError: No module named 'MySQLdb'"**:
+   ```bash
+   pip install mysqlclient
+   ```
+
+2. **Ошибки с зависимостями для mysqlclient**:
+   Если возникают ошибки при установке mysqlclient, может потребоваться запрос в службу поддержки PythonAnywhere для установки системных зависимостей:
+   ```
+   sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
+   ```
+
+3. **Проблемы с подключением к базе данных**:
+   - Проверьте правильность строки подключения
+   - Убедитесь, что пароль для MySQL указан верно
+   - Убедитесь, что имя базы данных указано в формате `yourusername$databasename`
 
 ### Проблемы с загрузкой файлов
 
