@@ -107,23 +107,47 @@ npm run build
 
 #### Вариант 1: Через Git
 
-Добавьте папку build в репозиторий, закоммитьте и выполните `git push`, затем на PythonAnywhere выполните `git pull`.
+> **Важно:** Папка `build` обычно добавлена в файл `.gitignore` и по умолчанию игнорируется Git. Есть два способа решения:
+
+**Способ 1: Временно исключить build из .gitignore**
+
+1. Отредактируйте файл `.gitignore` и закомментируйте или удалите строку `/build` или `build/`
+2. Добавьте, закоммитьте и отправьте изменения:
 
 ```bash
 # На локальной машине
+# Редактируем .gitignore и убираем строку с build/
 git add frontend/findmypet-client/build
+git add frontend/findmypet-client/.gitignore  # если вы изменили .gitignore
 git commit -m "Add build files"
 git push
 
+# После этого можно вернуть строку в .gitignore обратно
+```
+
+**Способ 2: Принудительное добавление игнорируемых файлов**
+
+```bash
+# На локальной машине
+git add -f frontend/findmypet-client/build
+git commit -m "Add build files"
+git push
+```
+
+Затем на PythonAnywhere получите изменения:
+
+```bash
 # На PythonAnywhere
 cd /home/yourusername/findmypet/repo
 git pull
 ```
 
-#### Вариант 2: Через ZIP архив
+#### Вариант 2: Через ZIP архив (рекомендуется)
+
+Этот способ проще и не требует изменений в `.gitignore`:
 
 1. На локальной машине запакуйте папку build в ZIP архив
-2. Загрузите архив на PythonAnywhere через раздел Files
+2. Загрузите архив на PythonAnywhere через раздел Files в веб-интерфейсе
 3. Распакуйте архив на PythonAnywhere:
 
 ```bash
