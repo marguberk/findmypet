@@ -9,6 +9,10 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app/static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload
+    
+    # JWT configuration
+    JWT_ERROR_MESSAGE_KEY = 'message'
+    JWT_IDENTITY_CLAIM = 'sub'
 
 class DevelopmentConfig(Config):
     DEBUG = True

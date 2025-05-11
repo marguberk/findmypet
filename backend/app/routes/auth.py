@@ -38,7 +38,7 @@ def register():
     db.session.commit()
     
     # Generate access token
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     
     return jsonify({
         'message': 'User registered successfully',
@@ -63,7 +63,7 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
     
     # Generate access token
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
     
     return jsonify({
         'message': 'Login successful',
@@ -76,6 +76,25 @@ def login():
 @jwt_required()
 def get_profile():
     current_user_id = get_jwt_identity()
+    print(f"JWT identity received: {current_user_id}, type: {type(current_user_id)}")
+    
+    try:
+        # Check if the identifier is a string
+        if not isinstance(current_user_id, str):
+            print(f"User ID is not a string: {type(current_user_id)}")
+            return jsonify({'message': 'User ID must be a string'}), 400
+            
+        # Check if the string represents a number
+        if not current_user_id.isdigit():
+            print(f"User ID is not a number: {current_user_id}")
+            return jsonify({'message': 'User ID must be a number'}), 400
+            
+        # Convert to integer
+        current_user_id = int(current_user_id)
+    except (ValueError, TypeError, AttributeError) as e:
+        print(f"Error processing user ID ({current_user_id}): {e}")
+        return jsonify({'message': f'Invalid user ID format: {e}'}), 400
+        
     user = User.query.get(current_user_id)
     
     if not user:
