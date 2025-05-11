@@ -1,0 +1,81 @@
+/* Chat Styles */
+.chat-container {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 #fff;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 20px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-message {
+  align-items: flex-end;
+}
+
+.other-message {
+  align-items: flex-start;
+}
+
+.system-message {
+  align-items: center;
+  width: 100%;
+}
+
+.message-content {
+  word-break: break-word;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-message .message-content {
+  border-radius: 18px 18px 4px 18px;
+}
+
+.other-message .message-content {
+  border-radius: 18px 18px 18px 4px;
+}
+
+.system-message-content {
+  max-width: 80%;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+/* Comment Styles */
+.comment-list {
+  max-height: 700px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 #fff;
+}
+
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.comment-list::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.comment-list::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 20px;
+}

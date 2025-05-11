@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPetById, deletePet } from '../../services/petService';
 import { useAuth } from '../../context/AuthContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import CommentList from '../comments/CommentList';
+import ChatInterface from '../comments/ChatInterface';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -40,9 +42,7 @@ const PetDetail = () => {
   const [error, setError] = useState('');
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
-  const [showMessageModal, setShowMessageModal] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageSent, setMessageSent] = useState(false);
+  const [showChatInterface, setShowChatInterface] = useState(false);
   
   const { currentUser, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -95,23 +95,6 @@ const PetDetail = () => {
 
   const handleShowPhone = () => {
     setShowPhoneModal(true);
-  };
-
-  const handleSendMessage = (e) => {
-    e.preventDefault();
-    if (message.trim()) {
-      // In a real app, this would send the message to the server
-      console.log("Message to be sent:", message);
-      console.log("Recipient user ID:", pet.user_id);
-      
-      // Simulate sending success
-      setMessageSent(true);
-      setTimeout(() => {
-        setShowMessageModal(false);
-        setMessage('');
-        setMessageSent(false);
-      }, 2000);
-    }
   };
   
   const hasValidCoordinates = (pet) => {
@@ -246,7 +229,7 @@ const PetDetail = () => {
               </button>
               <button 
                 className="btn btn-outline-primary"
-                onClick={() => setShowMessageModal(true)}
+                onClick={() => setShowChatInterface(true)}
               >
                 <i className="bi bi-chat-dots me-2"></i>
                 Send Message
@@ -284,6 +267,9 @@ const PetDetail = () => {
               </div>
             </div>
           )}
+          
+          {/* Comments Section */}
+          <CommentList petId={pet.id} />
         </div>
         
         <div className="card-footer">
@@ -371,93 +357,16 @@ const PetDetail = () => {
         </div>
       )}
       
-      {/* Send Message Modal */}
-      {showMessageModal && (
+      {/* Chat Interface */}
+      {showChatInterface && (
         <div className="modal d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-lg">
             <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Send Message</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={() => {
-                    setShowMessageModal(false);
-                    setMessage('');
-                    setMessageSent(false);
-                  }}
-                ></button>
-              </div>
-              <div className="modal-body">
-                {messageSent ? (
-                  <div className="alert alert-success text-center">
-                    <i className="bi bi-check-circle-fill me-2"></i>
-                    Your message has been sent successfully!
-                  </div>
-                ) : (
-                  <form onSubmit={handleSendMessage}>
-                    <div className="mb-3">
-                      <label htmlFor="messageSubject" className="form-label">Subject</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        id="messageSubject" 
-                        defaultValue={`Regarding: ${pet.title}`}
-                        readOnly
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="messageText" className="form-label">Message</label>
-                      <textarea 
-                        className="form-control" 
-                        id="messageText" 
-                        rows="4" 
-                        placeholder="Write your message here..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        required
-                      ></textarea>
-                    </div>
-                  </form>
-                )}
-              </div>
-              <div className="modal-footer">
-                {!messageSent && (
-                  <>
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary" 
-                      onClick={() => {
-                        setShowMessageModal(false);
-                        setMessage('');
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button 
-                      type="button" 
-                      className="btn btn-primary"
-                      onClick={handleSendMessage}
-                      disabled={!message.trim()}
-                    >
-                      <i className="bi bi-send me-2"></i>
-                      Send
-                    </button>
-                  </>
-                )}
-                {messageSent && (
-                  <button 
-                    type="button" 
-                    className="btn btn-secondary" 
-                    onClick={() => {
-                      setShowMessageModal(false);
-                      setMessage('');
-                      setMessageSent(false);
-                    }}
-                  >
-                    Close
-                  </button>
-                )}
+              <div className="modal-body p-0">
+                <ChatInterface 
+                  pet={pet} 
+                  onClose={() => setShowChatInterface(false)} 
+                />
               </div>
             </div>
           </div>
