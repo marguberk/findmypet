@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPetById, updatePet } from '../../services/petService';
 import { useAuth } from '../../context/AuthContext';
+import LocationPicker from '../map/LocationPicker';
 
 const EditPetPost = () => {
   const { id } = useParams();
@@ -78,6 +79,15 @@ const EditPetPost = () => {
       ...formData,
       [name]: value
     });
+  };
+  
+  // Handle location change from the map component
+  const handleLocationChange = (location) => {
+    setFormData(prev => ({
+      ...prev,
+      latitude: location.latitude,
+      longitude: location.longitude
+    }));
   };
   
   const handleImageChange = (e) => {
@@ -231,32 +241,15 @@ const EditPetPost = () => {
                   />
                 </div>
                 
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="latitude" className="form-label">Широта (необязательно)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-control"
-                      id="latitude"
-                      name="latitude"
-                      value={formData.latitude}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  
-                  <div className="col-md-6">
-                    <label htmlFor="longitude" className="form-label">Долгота (необязательно)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-control"
-                      id="longitude"
-                      name="longitude"
-                      value={formData.longitude}
-                      onChange={handleChange}
-                    />
-                  </div>
+                <div className="mb-3">
+                  <label className="form-label">Местоположение на карте</label>
+                  <LocationPicker 
+                    value={{ 
+                      latitude: formData.latitude, 
+                      longitude: formData.longitude 
+                    }} 
+                    onChange={handleLocationChange} 
+                  />
                 </div>
                 
                 <div className="mb-4">

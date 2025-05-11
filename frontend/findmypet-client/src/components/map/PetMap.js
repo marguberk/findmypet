@@ -56,14 +56,16 @@ const PetMap = () => {
       if (result.success) {
         // Filter pets with coordinates
         const petsWithCoordinates = result.data.filter(
-          pet => pet.latitude && pet.longitude
+          pet => pet.latitude && pet.longitude && 
+                 !isNaN(parseFloat(pet.latitude)) && 
+                 !isNaN(parseFloat(pet.longitude))
         );
         setPets(petsWithCoordinates);
       } else {
         setError(result.error);
       }
     } catch (err) {
-      setError('Ошибка при загрузке данных для карты');
+      setError('Error loading map data');
     } finally {
       setLoading(false);
     }
@@ -79,19 +81,19 @@ const PetMap = () => {
   
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('ru-RU');
+    return date.toLocaleDateString('en-US');
   };
   
   return (
     <div className="container">
-      <h2 className="mb-4">Карта потерянных и найденных животных</h2>
+      <h2 className="mb-4">Pet Location Map</h2>
       
       {/* Filters */}
       <div className="bg-light p-3 rounded mb-4">
         <div className="row">
           <div className="col-md-4">
             <div className="mb-2">
-              <label htmlFor="pet_type" className="form-label">Тип животного</label>
+              <label htmlFor="pet_type" className="form-label">Pet Type</label>
               <select 
                 id="pet_type"
                 name="pet_type"
@@ -99,18 +101,18 @@ const PetMap = () => {
                 value={filters.pet_type}
                 onChange={handleFilterChange}
               >
-                <option value="">Все типы</option>
-                <option value="cat">Кошка</option>
-                <option value="dog">Собака</option>
-                <option value="bird">Птица</option>
-                <option value="other">Другое</option>
+                <option value="">All Types</option>
+                <option value="cat">Cat</option>
+                <option value="dog">Dog</option>
+                <option value="bird">Bird</option>
+                <option value="other">Other</option>
               </select>
             </div>
           </div>
           
           <div className="col-md-4">
             <div className="mb-2">
-              <label htmlFor="status" className="form-label">Статус</label>
+              <label htmlFor="status" className="form-label">Status</label>
               <select 
                 id="status"
                 name="status"
@@ -118,9 +120,9 @@ const PetMap = () => {
                 value={filters.status}
                 onChange={handleFilterChange}
               >
-                <option value="">Все статусы</option>
-                <option value="missing">Потерян</option>
-                <option value="found">Найден</option>
+                <option value="">All Statuses</option>
+                <option value="missing">Missing</option>
+                <option value="found">Found</option>
               </select>
             </div>
           </div>
@@ -141,9 +143,9 @@ const PetMap = () => {
             {loading ? (
               <div className="d-flex justify-content-center align-items-center h-100">
                 <div className="spinner-border text-primary" role="status">
-                  <span className="visually-hidden">Загрузка...</span>
+                  <span className="visually-hidden">Loading...</span>
                 </div>
-                <p className="mb-0 ms-3">Загрузка карты...</p>
+                <p className="mb-0 ms-3">Loading map...</p>
               </div>
             ) : (
               <MapContainer 
@@ -159,7 +161,7 @@ const PetMap = () => {
                 {pets.map(pet => (
                   <Marker 
                     key={pet.id}
-                    position={[pet.latitude, pet.longitude]}
+                    position={[parseFloat(pet.latitude), parseFloat(pet.longitude)]}
                     icon={pet.status === 'missing' ? missingIcon : foundIcon}
                   >
                     <Popup>
@@ -178,19 +180,19 @@ const PetMap = () => {
                           />
                         )}
                         <p className="mb-1">
-                          <strong>Статус:</strong> {pet.status === 'missing' ? 'Потерян' : 'Найден'}
+                          <strong>Status:</strong> {pet.status === 'missing' ? 'Missing' : 'Found'}
                         </p>
                         <p className="mb-1">
-                          <strong>Адрес:</strong> {pet.last_seen_address}
+                          <strong>Address:</strong> {pet.last_seen_address}
                         </p>
                         <p className="mb-1">
-                          <strong>Дата:</strong> {formatDate(pet.last_seen_date)}
+                          <strong>Date:</strong> {formatDate(pet.last_seen_date)}
                         </p>
                         <Link 
                           to={`/pets/${pet.id}`} 
                           className="btn btn-primary btn-sm w-100 mt-2"
                         >
-                          Подробнее
+                          View Details
                         </Link>
                       </div>
                     </Popup>
@@ -205,7 +207,7 @@ const PetMap = () => {
       {/* Legend */}
       <div className="card">
         <div className="card-body">
-          <h5>Обозначения на карте</h5>
+          <h5>Map Legend</h5>
           <div className="d-flex">
             <div className="me-4">
               <img 
@@ -213,7 +215,7 @@ const PetMap = () => {
                 alt="Missing pet marker"
                 style={{ width: '20px' }}
               />
-              <span className="ms-2">Потерянные животные</span>
+              <span className="ms-2">Missing Pets</span>
             </div>
             <div>
               <img 
@@ -221,11 +223,11 @@ const PetMap = () => {
                 alt="Found pet marker"
                 style={{ width: '20px' }}
               />
-              <span className="ms-2">Найденные животные</span>
+              <span className="ms-2">Found Pets</span>
             </div>
           </div>
           <p className="text-muted mt-2 mb-0">
-            Нажмите на маркер, чтобы увидеть подробную информацию о животном.
+            Click on a marker to view pet details.
           </p>
         </div>
       </div>

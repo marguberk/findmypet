@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { createPet } from '../../services/petService';
 import { useAuth } from '../../context/AuthContext';
+import LocationPicker from '../map/LocationPicker';
 
 const AddPetPost = () => {
   const { isAuthenticated, currentUser } = useAuth();
@@ -72,6 +73,15 @@ const AddPetPost = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+  
+  // Handle location change from the map component
+  const handleLocationChange = (location) => {
+    setFormData(prev => ({
+      ...prev,
+      latitude: location.latitude,
+      longitude: location.longitude
+    }));
   };
   
   // Function to validate form data before submission
@@ -319,40 +329,15 @@ const AddPetPost = () => {
                   />
                 </div>
                 
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="latitude" className="form-label text-start d-block">Latitude (optional)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-control"
-                      id="latitude"
-                      name="latitude"
-                      value={formData.latitude}
-                      onChange={handleChange}
-                      placeholder="E.g.: 43.238949"
-                    />
-                  </div>
-                  
-                  <div className="col-md-6">
-                    <label htmlFor="longitude" className="form-label text-start d-block">Longitude (optional)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-control"
-                      id="longitude"
-                      name="longitude"
-                      value={formData.longitude}
-                      onChange={handleChange}
-                      placeholder="E.g.: 76.889709"
-                    />
-                  </div>
-                  <div className="col-12 mt-1">
-                    <small className="text-start text-muted d-block fst-italic">
-                      <i className="fas fa-info-circle me-1"></i>
-                      Coordinates can be obtained by marking a point on the map or from Google Maps
-                    </small>
-                  </div>
+                <div className="mb-3">
+                  <label className="form-label text-start d-block">Location on Map</label>
+                  <LocationPicker 
+                    value={{ 
+                      latitude: formData.latitude, 
+                      longitude: formData.longitude 
+                    }} 
+                    onChange={handleLocationChange} 
+                  />
                 </div>
                 
                 <div className="mb-4">
