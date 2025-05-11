@@ -89,7 +89,9 @@ from run import app as application
 
 ### 1. Сборка проекта React
 
-Соберите фронтенд на локальной машине:
+> **ВАЖНО:** На PythonAnywhere нет Node.js и npm по умолчанию, поэтому сборку фронтенда необходимо делать на локальной машине!
+
+Соберите фронтенд на вашей локальной машине (не на PythonAnywhere):
 
 ```bash
 cd frontend/findmypet-client
@@ -97,19 +99,32 @@ npm install
 npm run build
 ```
 
+После сборки у вас появится папка `build` с готовыми статическими файлами.
+
 ### 2. Загрузка файлов сборки
 
-Существует два способа:
+После сборки на локальной машине, существует два способа загрузить файлы на PythonAnywhere:
 
 #### Вариант 1: Через Git
 
 Добавьте папку build в репозиторий, закоммитьте и выполните `git push`, затем на PythonAnywhere выполните `git pull`.
 
+```bash
+# На локальной машине
+git add frontend/findmypet-client/build
+git commit -m "Add build files"
+git push
+
+# На PythonAnywhere
+cd /home/yourusername/findmypet/repo
+git pull
+```
+
 #### Вариант 2: Через ZIP архив
 
-1. Запакуйте папку build в ZIP архив
+1. На локальной машине запакуйте папку build в ZIP архив
 2. Загрузите архив на PythonAnywhere через раздел Files
-3. Распакуйте архив:
+3. Распакуйте архив на PythonAnywhere:
 
 ```bash
 cd /home/yourusername/findmypet/repo
@@ -120,7 +135,7 @@ unzip build.zip -d frontend_build
 
 В разделе "Static files" PythonAnywhere добавьте:
 - URL: `/`
-- Path: `/home/yourusername/findmypet/repo/frontend_build`
+- Path: `/home/yourusername/findmypet/repo/frontend_build` или `/home/yourusername/findmypet/repo/frontend/findmypet-client/build` (в зависимости от метода загрузки)
 
 ## Настройка базы данных
 
@@ -171,6 +186,23 @@ python -c "from app import create_app, db; app=create_app(); app.app_context().p
 CORS(app, resources={r"/api/*": {"origins": "https://yourusername.pythonanywhere.com"}})
 ```
 
+### Проблемы с npm и Node.js
+
+PythonAnywhere не предоставляет Node.js и npm в бесплатном тарифе. Есть несколько решений:
+
+1. **Рекомендуемый способ**: Собирайте React-приложение локально и загружайте готовую сборку
+2. **Альтернативный способ**: При необходимости, можно установить Node.js в домашнюю директорию:
+
+```bash
+# Установка Node.js в домашнюю директорию (может не работать на бесплатном тарифе)
+mkdir -p ~/node
+cd ~/node
+wget https://nodejs.org/dist/v16.20.0/node-v16.20.0-linux-x64.tar.xz
+tar xf node-v16.20.0-linux-x64.tar.xz
+echo 'export PATH=$HOME/node/node-v16.20.0-linux-x64/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
 ### Проблемы с загрузкой файлов
 
 Убедитесь, что директория для загрузки файлов существует и имеет правильные разрешения:
@@ -190,4 +222,4 @@ git pull
 # Перезагрузите приложение через веб-интерфейс PythonAnywhere
 ```
 
-Для обновления фронтенда после внесения изменений повторите процесс сборки и загрузки. 
+Для обновления фронтенда после внесения изменений повторите процесс сборки на локальной машине и загрузки готовых файлов на PythonAnywhere. 
